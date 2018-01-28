@@ -1,0 +1,12 @@
+{
+  "example1":"根据不同的打包方式设置不同的baseUrl，如果所有的环境的值都是同一个，直接这样写",
+  "example2": {
+    "default" : "如果没有找到运行环境对应的key，取default节点的值",
+    "debug" : "如果当前的运行环境是debug，就取这个节点的值"
+  },
+
+  "base_api": {
+    "default": "https://api.github.com"
+  }
+
+}
