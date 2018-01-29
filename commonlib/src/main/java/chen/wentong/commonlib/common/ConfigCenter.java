@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import chen.wentong.commonlib.BuildConfig;
+
 
 /**
  * 获取配置文件中的baseUrl数据

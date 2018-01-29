@@ -12,7 +12,7 @@ import io.reactivex.Observer;
  * 网络请求回调接口
  * @param <T>   网络请求回调成功的数据
  */
-public abstract class AbstractBaseSubscriber<T> implements Observer<ResponseBaseModel<T>> {
+public abstract class AbstBaseSubscriber<T> implements Observer<ResponseBaseModel<T>> {
     @Override
     public void onComplete() {
     }
