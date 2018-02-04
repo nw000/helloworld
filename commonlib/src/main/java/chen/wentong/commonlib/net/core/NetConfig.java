@@ -14,7 +14,7 @@ import okhttp3.Interceptor;
 
 public class NetConfig {
 
-    private long mConnectTimeout;                                        //连接超时
+    private long mConnectTimeout = 30 * 1000;                                        //连接超时
     private long mReadTimeout;
     private SSLSocketFactory mSSLSocketFactory;                          //验证书
     private boolean mToggleHttps;                                       //是否https验证

@@ -27,18 +27,20 @@ public class RequestManager {
 //    //网络配置
     private static final String HTTP_REQUEST = "HTTP_REQUEST";
     private static final String HTTPS_REQUEST = "HTTPS_REQUEST";
-    private static NetConfig sNetConfig = null;
     private static String sBaseUrl;
-    private StringBuffer sb = new StringBuffer();
+    private static StringBuffer sb = new StringBuffer();
+    private Class mNetService;
 //
     private Map<String, NetConfig> mNetConfigMap = new HashMap<>();
-    private Map<String, Object> mCacheServices = new HashMap<>();
-    private Map<String, Object> mNetService = new HashMap<>();
+    private Map<String, Object> mCacheServiceMap = new HashMap<>();
+    private Map<String, Object> mNetServiceMap = new HashMap<>();
 
     public static final long connectTimeoutMills = 10 * 1000l;
     public static final long readTimeoutMills = 10 * 1000l;
 
     private static RequestManager instance;
+    private File cacheFile;
+    private Class cacheService;
 
     private RequestManager() {
 
@@ -55,40 +57,39 @@ public class RequestManager {
         return instance;
     }
 
+    public static <S> S getNet() {
+        return (S) getNet(getInstance().mNetService);
+    }
+
     /**
      * 获取http请求api
      * @param <S>
      * @return
      */
-    public <S> S getNet(Class<S> service) {
-        return getNet(sBaseUrl, service);
+    public static  <S> S getNet(Class<S> service) {
+        return getInstance().getNet(sBaseUrl, service);
     }
 
     //获取指定的请求api
-    public <S> S getNet(String baseUrl, Class<S> service) {
-
-        NetConfig netConfig = getNetConfig(baseUrl);
-        checkNetconfig(netConfig);
-        checkBaseUrl(baseUrl);
+    public static  <S> S getNet(String baseUrl, Class<S> service) {
+        NetConfig netConfig = getInstance().getNetConfig(baseUrl);
+        getInstance().checkBaseUrl(baseUrl);
         sb.delete(0, sb.length());
         String key = sb.append(baseUrl).append(service.getCanonicalName())
                 .append(netConfig.getSSLSocketFactory() == null ? "" :
                         netConfig.getSSLSocketFactory().getClass()).toString();
-        if (mNetService.get(key) != null) {
-            return (S) mNetService.get(key);
+        if (getInstance().mNetServiceMap.get(key) != null) {
+            return (S) getInstance().mNetServiceMap.get(key);
         }
         S s = getInstance().getRetrofit(baseUrl).create(service);
         S netService = (S) Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service},
                 new NetInvocationHandler<>(s));
-        mNetService.put(key, netService);
+        getInstance().mNetServiceMap.put(key, netService);
         return netService;
     }
 
-    public NetConfig getNetConfig(String baseUrl) {
-        if (mNetConfigMap.get(baseUrl) != null) {
-            return mNetConfigMap.get(baseUrl);
-        }
-        return sNetConfig;
+    public static <S> S getCacheNet() {
+        return (S) getCacheNet(getInstance().cacheFile, getInstance().cacheService);
     }
 
     /**
@@ -98,14 +99,14 @@ public class RequestManager {
      * @param <S>
      * @return
      */
-    public <S> S getCacheNet(File cacheFile, Class<S> cacheService) {
+    public static  <S> S getCacheNet(File cacheFile, Class<S> cacheService) {
         if (cacheFile == null) {
             throw new IllegalArgumentException("file cant be null or arg is not file");
         }
         sb.delete(0, sb.length());
         String key = sb.append(cacheFile.getAbsolutePath() + cacheService.getCanonicalName()).toString();
-        if (mCacheServices.get(key) != null) {
-            return (S) mCacheServices.get(key);
+        if (getInstance().mCacheServiceMap.get(key) != null) {
+            return (S) getInstance().mCacheServiceMap.get(key);
         }
         S s = new RxCache.Builder()
                 .persistence(cacheFile, new GsonSpeaker())
@@ -113,14 +114,8 @@ public class RequestManager {
         //添加请求数据时指定io线程的代理操作
         S cacheProvider = (S) Proxy.newProxyInstance(cacheService.getClassLoader(),
                 new Class[]{cacheService}, new NetInvocationHandler<>(s));
-        mCacheServices.put(key, cacheFile);
+        getInstance().mCacheServiceMap.put(key, cacheFile);
         return cacheProvider;
-    }
-
-    private void checkNetconfig(NetConfig netConfig) {
-        if (netConfig == null) {
-            throw new IllegalStateException("must set netConfig first");
-        }
     }
 
     private void checkBaseUrl(String baseUrl) {
@@ -129,51 +124,47 @@ public class RequestManager {
         }
     }
 
-
-    public static void setCommonConfig(String baseUrl, NetConfig netConfig) {
-        sBaseUrl = baseUrl;
-        RequestManager.sNetConfig = netConfig;
+    public void initBaseUrl(String baseUrl, Class netService) {
+        initBaseUrl(baseUrl, netService,null);
     }
 
-    public static void registerNetConfig(String baseUrl, NetConfig netConfig) {
-        getInstance().checkNetconfig(netConfig);
+    public void initBaseUrl(String baseUrl, Class netService, NetConfig netConfig) {
+        this.sBaseUrl = baseUrl;
+        this.mNetService = netService;
+        registerNetConfig(baseUrl, netConfig);
+
     }
 
-
-    public Retrofit getRetrofit(String baseUrl) {
-        return getRetrofit(baseUrl, null);
+    public void initCache(File file, Class cacheService) {
+        this.cacheFile = file;
+        this.cacheService = cacheService;
     }
 
-
-    public Retrofit getRetrofit(String baseUrl, NetConfig netConfig) {
-        if (TextUtils.isEmpty(baseUrl)) {
-            throw new IllegalStateException("baseUrl can not be null");
-        }
-
+    public void registerNetConfig(String baseUrl, NetConfig netConfig) {
+        getInstance().checkBaseUrl(baseUrl);
         if (netConfig == null) {
-            netConfig = mNetConfigMap.get(baseUrl);
-            if (netConfig == null) {
-                netConfig = sNetConfig;
-            }
-
+            netConfig = getDefaultNetConfig();
         }
-        checkNetconfig(netConfig);
+        getInstance().mNetConfigMap.remove(baseUrl);
+        getInstance().mNetConfigMap.put(baseUrl, netConfig);
+        getInstance().mNetServiceMap.remove(baseUrl);
+    }
 
+
+    private Retrofit getRetrofit(String baseUrl) {
+        checkBaseUrl(baseUrl);
+        NetConfig netConfig = getNetConfig(baseUrl);
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(getClient(baseUrl, netConfig))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create());
-
         Retrofit retrofit = builder.build();
         mNetConfigMap.put(baseUrl, netConfig);
         return retrofit;
     }
 
     private OkHttpClient getClient(String baseUrl, NetConfig netConfig) {
-
-        checkNetconfig(netConfig);
-
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
         builder.connectTimeout(netConfig.getConnectTimeout() != 0
@@ -209,15 +200,28 @@ public class RequestManager {
         return client;
     }
 
-    public static NetConfig getCommonNetConfig() {
-        return sNetConfig;
+    public NetConfig getDefaultNetConfig() {
+        return new NetConfig();
     }
 
-
+    public NetConfig getNetConfig(String baseUrl) {
+        if (mNetConfigMap.get(baseUrl) != null) {
+            return mNetConfigMap.get(baseUrl);
+        }
+        NetConfig defaultNetConfig = getDefaultNetConfig();
+        mNetConfigMap.put(baseUrl, defaultNetConfig);
+        return defaultNetConfig;
+    }
 
     public static void clearCache() {
-        getInstance().mCacheServices.clear();
-        getInstance().mNetService.clear();
+        getInstance().mCacheServiceMap.clear();
+        getInstance().mNetServiceMap.clear();
         getInstance().mNetConfigMap.clear();
+    }
+
+    public void removeNetService(String baseUrl) {
+        if (TextUtils.isEmpty(baseUrl)) {
+            getInstance().mNetServiceMap.remove(baseUrl);
+        }
     }
 }
