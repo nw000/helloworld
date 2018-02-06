@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <chen.wentong.commonlib.widget.TitleBar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height"
+            app:title_text="音乐播放"
+            app:title_color="@color/colorPrimary"
+            android:background="@color/title_bg"
+            app:layout_scrollFlags="scroll|enterAlways"
+            />
+
+        <HorizontalScrollView
+            android:id="@+id/hsv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#fff"
+            >
+
+            <Button
+                android:id="@+id/btn_load_local_music_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
+                android:layout_marginLeft="@dimen/btn_left_margin"
+                android:layout_marginRight="@dimen/btn_right_margin"
+                android:paddingRight="@dimen/btn_right_padding"
+                android:paddingLeft="@dimen/btn_left_padding"
+                android:gravity="center"
+                android:text="加载本地列表"/>
+
+            <Button
+                android:id="@+id/btn_player_assets_music"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
+                android:layout_marginLeft="@dimen/btn_left_margin"
+                android:layout_marginRight="@dimen/btn_right_margin"
+                android:paddingRight="@dimen/btn_right_padding"
+                android:paddingLeft="@dimen/btn_left_padding"
+                android:gravity="center"
+                android:text="播放assets音乐"/>
+
+        </HorizontalScrollView>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    </android.support.v7.widget.RecyclerView>
+
+</android.support.design.widget.CoordinatorLayout>

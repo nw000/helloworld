@@ -61,6 +61,18 @@ dependencies {
     //检测内存泄露
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    //rxlifecycle网络请求生命周期绑定
+    //Http请求绑定生命周期
+    compile 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
+    compile 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.1'
+    compile 'com.trello.rxlifecycle2:rxlifecycle-android-lifecycle:2.2.1'
+    //日志打印
+    implementation 'com.apkfuns.logutils:library:1.5.1.1'
+    //butterknife
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    //Eventbus
+    compile 'org.greenrobot:eventbus:3.1.1'
 }
 
 uploadArchives {
