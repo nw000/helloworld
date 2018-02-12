@@ -11,7 +11,7 @@ import com.bumptech.glide.request.transition.ViewPropertyTransition;
 
 import java.io.File;
 
-import chen.wentong.commonlib.utils.DevicesUtil;
+import chen.wentong.commonlib.utils.SizeUtil;
 import chen.wentong.commonlib.utils.imageutil.glide.ImgLoaderUtil;
 
 /**
@@ -603,8 +603,8 @@ public class SingleConfig {
          * @return
          */
         public ConfigBuilder override(int oWidth, int oHeight) {
-            this.oWidth = DevicesUtil.dp2px(oWidth);
-            this.oHeight = DevicesUtil.dp2px(oHeight);
+            this.oWidth = SizeUtil.dp2px(oWidth);
+            this.oHeight = SizeUtil.dp2px(oHeight);
             return this;
         }
 
@@ -648,7 +648,7 @@ public class SingleConfig {
          * @return
          */
         public ConfigBuilder rectRoundCorner(int rectRoundRadius) {
-            this.rectRoundRadius = DevicesUtil.dp2px(rectRoundRadius);
+            this.rectRoundRadius = SizeUtil.dp2px(rectRoundRadius);
             this.shapeMode = ShapeMode.RECT_ROUND;
             return this;
         }

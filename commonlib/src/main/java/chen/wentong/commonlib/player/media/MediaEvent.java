@@ -6,15 +6,16 @@ package chen.wentong.commonlib.player.media;
  */
 
 public enum  MediaEvent {
-    MEDIA_INITIALIZED(0, "初始化成功"),
-    MEDIA_PREPARE(1, "准备状态"),
-    MEDIA_START(2, "开始播放状态"),
-    MEDIA_PAUSE(3, "暂停状态"),
-    MEDIA_STOP(4, "停止状态"),
-    MEDIA_COMPLETE(5, "播放完成状态"),
-    MEDIA_ERROR(6, "播放错误状态"),
-    MEDIA_SEEK_TO_COMPLITE(7, "拖动播放进度完成"),
-    MEDIA_PATH_IS_ERROR(8, "播放路径错误"),
+    INITIALIZED(0, "初始化成功"),
+    PREPARE(1, "准备状态"),
+    ON_PREPARE(2, "准备完成状态"),
+    PLAYING(2, "播放状态"),
+    PAUSE(3, "暂停状态"),
+    STOP(4, "停止状态"),
+    ON_COMPLETE(5, "播放完成状态"),
+    ON_ERROR(6, "播放错误状态"),
+    SEEK_TO_COMPLITE(7, "拖动播放进度完成"),
+    PATH_IS_ILLEGAL(8, "播放路径不合法"),
             ;
 
     private int status;

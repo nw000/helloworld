@@ -39,6 +39,7 @@ public class CoordlActivity extends BaseActivity {
 //        viewPager.setAdapter();
         rv.setLayoutManager(new LinearLayoutManager(this));
         mStringTestAdapter = new StringTestAdapter();
+        mStringTestAdapter.setNewData(20);
         rv.setAdapter(mStringTestAdapter);
     }
 

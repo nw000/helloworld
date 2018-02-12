@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="normal_btn">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    <style name="default_titlebar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/title_height</item>
+        <!--<item name="android:paddingTop">5dp</item>-->
+        <!--<item name="android:paddingBottom">5dp</item>-->
+        <!--<item name="android:paddingLeft">15dp</item>-->
+        <!--<item name="android:paddingRight">15dp</item>-->
+        <!--<item name="xmlns:app">http://schemas.android.com/apk/res-auto</item>-->
+        <!--<item name="android:background">@color/title_bg</item>-->
+        <!--<item name="app:title_color">@color/title_color</item>-->
+        <!--<item name="app:title_size">@dimen/title_size</item>-->
+    </style>
+
+    <style name="set_w_h_match">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+</resources>

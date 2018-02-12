@@ -5,6 +5,7 @@ import java.util.Random;
 
 import chen.wentong.commonlib.player.media.IPlayer;
 import chen.wentong.commonlib.player.media.MediaPlayerManager;
+import chen.wentong.commonlib.player.media.MediaStatus;
 
 /**
  * Created by wentong.chen on 18/2/5.
@@ -29,8 +30,6 @@ public class MusicPlayerControler<T> implements IMusicControler<Songinfo<T>>{
     private Songinfo<T> preSong;
     private Songinfo<T> nextSong;
     private int curIndex;
-    private boolean autoNext;                                       //是否自动下一曲， 不是点击下一曲
-    private boolean autoPre;
 
     public MusicPlayerControler() {
         mPlayer = getPlayer();
@@ -41,6 +40,15 @@ public class MusicPlayerControler<T> implements IMusicControler<Songinfo<T>>{
     public void play(int index) {
         if (mSonglist == null && mSonglist.isEmpty()) {
             throw new IllegalArgumentException("请设置歌曲列表");
+        }
+        if (index == curIndex) {
+            if (mPlayer.isPlaying()) {
+                mPlayer.pause();
+                return;
+            } else if (mPlayer.getCurrentStatus() == MediaStatus.PAUSE){
+                mPlayer.continueStart();
+                return;
+            }
         }
         Songinfo<T> tSonginfo = mSonglist.get(index);
         play(tSonginfo);
@@ -55,6 +63,10 @@ public class MusicPlayerControler<T> implements IMusicControler<Songinfo<T>>{
         // TODO: 18/2/5
         if (t == null) {
             throw new IllegalArgumentException("song cant be null");
+        }
+        if (currentSong == t && mPlayer.isPlaying()) {
+            mPlayer.pause();
+            return;
         }
         preSong = currentSong;
         currentSong = t;
@@ -142,7 +154,7 @@ public class MusicPlayerControler<T> implements IMusicControler<Songinfo<T>>{
 
     @Override
     public IPlayer getPlayer() {
-        return MediaPlayerManager.getInstance();
+        return mPlayer == null ? new MediaPlayerManager() : mPlayer;
     }
 
     @Override

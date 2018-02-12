@@ -17,8 +17,11 @@ import java.util.List;
 
 public class StringTestAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     public StringTestAdapter() {
-        super(R.layout.item_string_test,
-                TestUtils.getListStrings("StringTestAdapter", 100));
+        super(R.layout.item_string_test, null);
+    }
+
+    public void setNewData(int size) {
+        setNewData(TestUtils.getListStrings("StringTestAdapter", 100));
     }
 
     @Override

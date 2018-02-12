@@ -17,20 +17,11 @@ import java.io.IOException;
 
 public class MediaPlayerManager implements IPlayer{
     private static final String TAG = MediaPlayerManager.class.getSimpleName();
-    private static MediaPlayerManager mInstance = new MediaPlayerManager();
     private MediaPlayer mMediaPlayer;
     private MediaStatus mMediaStatus = MediaStatus.NO_INITIALIZED;                          //音乐播放状态
     private String url;
     private boolean mLooping;                                                     //是否循环播放
     private MediaPlayerListener mMediaPlayerListener;                             //音乐播放监听
-
-    private MediaPlayerManager() {
-
-    }
-
-    public static MediaPlayerManager getInstance() {
-        return mInstance;
-    }
 
     @Override
     public void initPlayer() {
@@ -49,11 +40,8 @@ public class MediaPlayerManager implements IPlayer{
             @Override
             public void onPrepared(MediaPlayer mp) {
                 LogUtils.d(TAG, "onPrepared");
-                mMediaStatus = MediaStatus.PREPARE;
-                EventBus.getDefault().post(MediaEvent.MEDIA_PREPARE);
-                if (mMediaPlayerListener != null) {
-                    mMediaPlayerListener.onPrepare();
-                }
+                EventBus.getDefault().post(MediaEvent.PREPARE);
+                onStatusChange();
             }
         });
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -61,10 +49,8 @@ public class MediaPlayerManager implements IPlayer{
             public void onCompletion(MediaPlayer mp) {
                 LogUtils.d(TAG, "onCompletion");
                 mMediaStatus = MediaStatus.COMPLETE;
-                EventBus.getDefault().post(MediaEvent.MEDIA_COMPLETE);
-                if (mMediaPlayerListener != null) {
-                    mMediaPlayerListener.onComplete();
-                }
+                EventBus.getDefault().post(MediaEvent.ON_COMPLETE);
+                onStatusChange();
             }
         });
         mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -72,10 +58,8 @@ public class MediaPlayerManager implements IPlayer{
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 LogUtils.d(TAG, "onCompletion");
                 mMediaStatus = MediaStatus.ERROR;
-                EventBus.getDefault().post(MediaEvent.MEDIA_ERROR);
-                if (mMediaPlayerListener != null) {
-                    mMediaPlayerListener.onError(new MediaException("what = " + what + " extra = " + extra));
-                }
+                EventBus.getDefault().post(MediaEvent.ON_ERROR);
+                onStatusChange();
                 return false;
             }
         });
@@ -83,7 +67,7 @@ public class MediaPlayerManager implements IPlayer{
             @Override
             public void onSeekComplete(MediaPlayer mp) {
                 LogUtils.d(TAG, "onSeekComplete");
-                EventBus.getDefault().post(MediaEvent.MEDIA_SEEK_TO_COMPLITE);
+                EventBus.getDefault().post(MediaEvent.SEEK_TO_COMPLITE);
             }
         });
         mMediaStatus = MediaStatus.INITIALIZED;
@@ -94,9 +78,10 @@ public class MediaPlayerManager implements IPlayer{
      */
     @Override
     public void start(String url) {
+        this.url = url;
         if (TextUtils.isEmpty(url)) {
-            mMediaStatus = MediaStatus.ERROR;
-            EventBus.getDefault().post(MediaEvent.MEDIA_ERROR);
+            mMediaStatus = MediaStatus.PATH_ERROR;
+
             return;
         }
         try {
@@ -107,7 +92,7 @@ public class MediaPlayerManager implements IPlayer{
             mMediaPlayer.prepare();
             mMediaPlayer.start();
             LogUtils.d(TAG, "music is start");
-            mMediaStatus = MediaStatus.START;
+            mMediaStatus = MediaStatus.PLAYING;
         } catch (IOException e) {
             e.printStackTrace();
             LogUtils.d(TAG, "music start error:" + e.getMessage());
@@ -119,9 +104,9 @@ public class MediaPlayerManager implements IPlayer{
      */
     @Override
     public void continueStart() {
-        if (mMediaStatus == MediaStatus.PREPARE) {
+        if (mMediaStatus == MediaStatus.PAUSE) {
             mMediaPlayer.start();
-            mMediaStatus = MediaStatus.START;
+            mMediaStatus = MediaStatus.PLAYING;
             LogUtils.d(TAG, "continueStart.....");
         }
     }
@@ -136,7 +121,7 @@ public class MediaPlayerManager implements IPlayer{
                 e.printStackTrace();
             }
         }
-        if (mMediaStatus == MediaStatus.START ||
+        if (mMediaStatus == MediaStatus.PLAYING ||
                 mMediaStatus == MediaStatus.PAUSE) {
             mMediaPlayer.seekTo(position);
             LogUtils.d(TAG, "seekTo.....position = " + position);
@@ -147,7 +132,7 @@ public class MediaPlayerManager implements IPlayer{
      * 暂停音乐播放
      */
     public void pause() {
-        if (MediaStatus.START == mMediaStatus) {
+        if (MediaStatus.PLAYING == mMediaStatus) {
             mMediaPlayer.pause();
             mMediaStatus = MediaStatus.PAUSE;
             LogUtils.d(TAG, "pause ... position = " + mMediaPlayer.getCurrentPosition());
@@ -158,7 +143,7 @@ public class MediaPlayerManager implements IPlayer{
      * 停止音乐播放
      */
     public void stop() {
-        if (mMediaStatus == MediaStatus.PREPARE || mMediaStatus == MediaStatus.START ||
+        if (mMediaStatus == MediaStatus.PREPARE || mMediaStatus == MediaStatus.PLAYING ||
                 mMediaStatus == MediaStatus.PAUSE) {
             mMediaPlayer.stop();
             mMediaStatus = MediaStatus.PAUSE;
@@ -189,7 +174,7 @@ public class MediaPlayerManager implements IPlayer{
     @Override
     public int getCurrentPosition() {
         int position = 0;
-        if (mMediaStatus == MediaStatus.START || mMediaStatus == MediaStatus.PAUSE) {
+        if (mMediaStatus == MediaStatus.PLAYING || mMediaStatus == MediaStatus.PAUSE) {
             position = mMediaPlayer.getCurrentPosition();
         }
         LogUtils.d(TAG, "CurrentPosition = " + position);
@@ -215,6 +200,12 @@ public class MediaPlayerManager implements IPlayer{
     }
 
     public boolean isPlaying() {
-        return MediaStatus.START == mMediaStatus;
+        return MediaStatus.PLAYING == mMediaStatus;
+    }
+
+    private void onStatusChange() {
+        if (mMediaPlayerListener != null) {
+            mMediaPlayerListener.onPlayerStatusChange(mMediaStatus, mMediaPlayer);
+        }
     }
 }

@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import chen.wentong.commonlib.R;
+import chen.wentong.commonlib.utils.SizeUtil;
 
 
 /**
@@ -22,8 +23,8 @@ import chen.wentong.commonlib.R;
 
 public class TitleBar extends RelativeLayout {
     private static final int DEFAULT_TEXT_COLOR = Color.BLACK;
-    private static final int DEFAULT_TITLE_SIZE = 16;
-    private static final int DEFAULT_SUBTITLE_SIZE = 14;
+    private static final int DEFAULT_TITLE_SIZE = SizeUtil.sp2px(16);
+    private static final int DEFAULT_SUBTITLE_SIZE = SizeUtil.sp2px(14);
     private String mTitleText;
     private int mTitleColor;
     private float mTitleSize;

@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity extends RxLifeActivity implements IBaseView{
-    public final String TAG = getClass().getSimpleName();
+    public final String TAG = getClass().getSimpleName() + "%s";
     //生命周期绑定
     protected final LifecycleProvider<Lifecycle.Event> mLifecycleProvider
             = AndroidLifecycle.createLifecycleProvider(this);

@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
 
-import chen.wentong.commonlib.utils.DevicesUtil;
+import chen.wentong.commonlib.utils.SizeUtil;
 import chen.wentong.commonlib.widget.loadsir.callback.LoadManager;
 
 /**
@@ -18,7 +18,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DevicesUtil.init(this);
+        SizeUtil.init(this);
         LeakCanary.install(this);
         LoadManager.beginBuilder()
                 .addCallback(new ErrorCallback())

@@ -25,29 +25,37 @@
             android:background="#fff"
             >
 
-            <Button
-                android:id="@+id/btn_load_local_music_list"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_black"
-                android:layout_marginLeft="@dimen/btn_left_margin"
-                android:layout_marginRight="@dimen/btn_right_margin"
-                android:paddingRight="@dimen/btn_right_padding"
-                android:paddingLeft="@dimen/btn_left_padding"
-                android:gravity="center"
-                android:text="加载本地列表"/>
+                android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/btn_player_assets_music"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_black"
-                android:layout_marginLeft="@dimen/btn_left_margin"
-                android:layout_marginRight="@dimen/btn_right_margin"
-                android:paddingRight="@dimen/btn_right_padding"
-                android:paddingLeft="@dimen/btn_left_padding"
-                android:gravity="center"
-                android:text="播放assets音乐"/>
+                <Button
+                    android:id="@+id/btn_load_local_music_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_black"
+                    android:layout_marginLeft="@dimen/btn_left_margin"
+                    android:layout_marginRight="@dimen/btn_right_margin"
+                    android:paddingRight="@dimen/btn_right_padding"
+                    android:paddingLeft="@dimen/btn_left_padding"
+                    android:gravity="center"
+                    android:text="加载本地列表"/>
+
+                <Button
+                    android:id="@+id/btn_player_assets_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_black"
+                    android:layout_marginLeft="@dimen/btn_left_margin"
+                    android:layout_marginRight="@dimen/btn_right_margin"
+                    android:paddingRight="@dimen/btn_right_padding"
+                    android:paddingLeft="@dimen/btn_left_padding"
+                    android:gravity="center"
+                    android:text="播放assets音乐"/>
+
+            </LinearLayout>
+
+
 
         </HorizontalScrollView>
 

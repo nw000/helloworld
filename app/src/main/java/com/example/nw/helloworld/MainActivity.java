@@ -1,12 +1,16 @@
 package com.example.nw.helloworld;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nw.helloworld.model.bluetooth.BlueToothActivity;
+import com.example.nw.helloworld.model.music.MusicActivity;
 import com.example.nw.helloworld.viewstudy.coordinatorlayout_study.CoordlActivity;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -32,7 +36,24 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .subscribe(new AbsObjectSubscriber<Boolean>() {
+                    @Override
+                    public void onFailure(Throwable e) {
+                        showLongToast("权限申请失败");
+                    }
 
+                    @Override
+                    public void onSuccess(Boolean aBoolean) {
+                        if (aBoolean) {
+                            showLongToast("同意");
+                        } else
+                        {
+                            showLongToast("不同意");
+                        }
+                    }
+                });
     }
 
     @Override
@@ -57,14 +78,17 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
-    @OnClick({R.id.btn_coordl, R.id.btn_music})
+    @OnClick({R.id.btn_coordl, R.id.btn_music, R.id.bluetooth})
     public void clickView(View view) {
         switch (view.getId()) {
             case R.id.btn_coordl:
                 startActivity(CoordlActivity.class);
                 break;
-
             case R.id.btn_music:
+                startActivity(MusicActivity.class);
+                break;
+            case R.id.bluetooth:
+                startActivity(BlueToothActivity.class);
                 break;
         }
     }

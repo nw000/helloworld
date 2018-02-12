@@ -31,4 +31,10 @@
         android:text="musicActivity"
         />
 
+    <Button
+        android:id="@+id/bluetooth"
+        style="@style/normal_btn"
+        android:text="蓝牙"
+        />
+
 </LinearLayout>
