@@ -21,7 +21,7 @@ public class StringTestAdapter extends BaseQuickAdapter<String, BaseViewHolder> 
     }
 
     public void setNewData(int size) {
-        setNewData(TestUtils.getListStrings("StringTestAdapter", 100));
+        setNewData(TestUtils.getListStrings("StringTestAdapter", size));
     }
 
     @Override

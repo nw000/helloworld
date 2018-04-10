@@ -52,9 +52,11 @@ public class BlueToothActivity extends BaseActivity {
                 showLongToast("蓝牙搜索到新设备");
                 BluetoothDevice device=intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() == BluetoothDevice.BOND_BONDED) { //已配对设备
-                    mAdapter.addData("已配对设备 \n 名称是 ：" + device.getName() + "\n地址是：" + device.getAddress());
+                    mAdapter.addData("已配对设备 \n 名称是 ：" + device.getName() + "\n地址是："
+                            + device.getAddress());
                 } else {                                                    //为配对设备
-                    mAdapter.addData("没有配对过的设备 \n 名称是 ：" + device.getName() + "\n地址是：" + device.getAddress());
+                    mAdapter.addData("没有配对过的设备 \n 名称是 ：" + device.getName() + "\n地址是："
+                            + device.getAddress());
                 }
             }
         }
